@@ -1,1 +1,1 @@
-# AzureTableStorage.Sample
+# A sample web api (.net6) project for connecting to azure table storage
