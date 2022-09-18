@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureTableStorage.WepApp", "AzureTableStorage.WepApp\AzureTableStorage.WepApp.csproj", "{4378198F-6FC3-461E-8492-C813BBC1F214}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureTableStorage.Service", "AzureTableStorage.Service\AzureTableStorage.Service.csproj", "{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4378198F-6FC3-461E-8492-C813BBC1F214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4378198F-6FC3-461E-8492-C813BBC1F214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4378198F-6FC3-461E-8492-C813BBC1F214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4378198F-6FC3-461E-8492-C813BBC1F214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D3097D9D-7BE7-4EF9-A57F-8BC2ED5862FF}
+	EndGlobalSection
+EndGlobal
