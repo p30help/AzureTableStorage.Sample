@@ -1,4 +1,3 @@
-using Azure.Data.Tables;
 using AzureTableStorage.Service;
 using AzureTableStorage.Service.Entities;
 using AzureTableStorage.Service.Tools;
@@ -21,19 +20,21 @@ namespace AzureTableStorage.WepApp.Controllers
         }
 
         [HttpPost]
-        public Task<Guid> Create(CustomerRequest customer)
+        public Task<Guid> Create(InsertCustomerRequest request)
         {
-            return _customerService.AddCustomer(new Customer()
+            var customer = new Customer()
             {
-                Id = customer.Id,
-                Name = customer.Name,
-                Address = customer.Address,
-                CustomerType = customer.CustomerType,
-            });
+                Id = request.Id,
+                Name = request.Name,
+                Address = request.Address,
+                CustomerType = request.CustomerType,
+            };
+
+            return _customerService.AddCustomer(customer);
         }
 
         [HttpGet("{id}")]
-        public async Task<CustomerRequest> Get(Guid id)
+        public async Task<CustomerResponse?> Get(Guid id)
         {
             var res = await _customerService.GetCustomer(id);
 
@@ -43,19 +44,43 @@ namespace AzureTableStorage.WepApp.Controllers
         }
 
         [HttpGet("List")]
-        public async Task<PageableList<CustomerRequest>> List(int pageNum)
+        public async Task<PageableList<CustomerResponse>> List(int pageNum)
         {
             var list = await _customerService.GetCustomersByPage(pageNum, 5);
 
-            return new PageableList<CustomerRequest> (list.Data.Select(x => convertToCustomerRequest(x)), list.TotalCount);
+            return new PageableList<CustomerResponse> (list.Data.Select(x => convertToCustomerRequest(x)), list.TotalCount);
         }
 
-        private CustomerRequest convertToCustomerRequest(Customer entity)
+
+        [HttpGet("ListByType/{type}")]
+        public async Task<List<CustomerResponse>> ListByType(CustomerTypes type)
         {
-            return new CustomerRequest()
+            var list = await _customerService.GetCustomersByType(type);
+
+            return list.Select(x => convertToCustomerRequest(x)).ToList();
+        }
+
+
+        [HttpPut("{id}")]
+        public Task Update(Guid id, UpdateCustomerRequest request)
+        {
+            var customer = new Customer()
+            {
+                Id = id,
+                Name = request.Name,
+                Address = request.Address,
+                CustomerType = request.CustomerType
+            };
+
+            return _customerService.UpdateCustomer(customer);
+        }
+
+        private CustomerResponse convertToCustomerRequest(Customer entity)
+        {
+            return new CustomerResponse()
             {
                 Address = entity.Address,
-                CustomerType = entity.CustomerType,
+                CustomerType = (CustomerTypes) entity.CustomerTypeValue,
                 Id = entity.Id,
                 Name = entity.Name,
                 RecordDate = entity.RecordDate,

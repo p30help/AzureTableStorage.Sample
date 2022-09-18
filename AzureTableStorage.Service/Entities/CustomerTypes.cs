@@ -10,6 +10,5 @@ namespace AzureTableStorage.Service.Entities
     {
         Basic = 0,
         Gold = 1
-
     }
 }

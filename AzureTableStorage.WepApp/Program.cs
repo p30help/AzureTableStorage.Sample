@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // read more
 // https://github.com/Azure/azure-sdk-for-net/blob/Azure.Data.Tables_12.6.1/sdk/tables/Azure.Data.Tables/README.md
 // https://www.youtube.com/watch?v=HSL1poL1VR0
+// https://microsoft.github.io/AzureTipsAndTricks/blog/tip83.html
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

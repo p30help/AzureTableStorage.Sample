@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AzureTableStorage.Service.Entities
 {
-    public class CustomerRequest
+    public class CustomerResponse
     {
         public Guid Id { get; set; }
 

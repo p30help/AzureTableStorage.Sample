@@ -12,6 +12,8 @@ namespace AzureTableStorage.Service
 
         public Task<PageableList<Customer>> GetCustomersByPage(int pageNum, int pageSize);
 
+        public Task<List<Customer>> GetCustomersByType(CustomerTypes customerType);
+
         public Task<Guid> AddCustomer(Customer customer);
 
         public Task UpdateCustomer(Customer customer);
@@ -46,15 +48,6 @@ namespace AzureTableStorage.Service
             customer.RecordDate = DateTime.UtcNow;
             customer.PartitionKey = partitionKey;
 
-            // Make a dictionary entity by defining a <see cref="TableEntity">.
-            //var entity = new TableEntity(partitionKey, customer.Id.ToString())
-            //{
-            //    { nameof(Customer.RecordDate), customer.RecordDate },
-            //    { nameof(Customer.Name), customer.Name },
-            //    { nameof(Customer.Address), customer.Address },
-            //    { nameof(Customer.CustomerType), (int)customer.CustomerType }
-            //};
-
             // Add the newly created entity.
             tableClient.AddEntity(customer);
 
@@ -67,63 +60,61 @@ namespace AzureTableStorage.Service
         {
             // Create the table if it doesn't already exist to verify we've successfully authenticated.
             var table = await tableClient.CreateIfNotExistsAsync();
-
-            //// Construct a new <see cref="TableServiceClient" /> using a <see cref="TableSharedKeyCredential" />.
-            //var storageUri = "https://AccountName.table.core.windows.net";
-            //var accountName = "AccountName";
-            //var accountKey = "[ACCESS_KEY]";
-            //var credential = new TableSharedKeyCredential(accountName, accountKey);
-            //
-            //
-            //var serviceClient = new TableServiceClient(
-            //    new Uri(storageUri),
-            //    credential);
-            //
-            //string tableName = "customers";
-            //TableItem table = serviceClient.CreateTableIfNotExists(tableName);
         }
 
         public async Task<Customer> GetCustomer(Guid customerId)
         {
             var customerRes = await tableClient.GetEntityAsync<Customer>(partitionKey, customerId.ToString());
 
-            return customerRes?.Value;
+            return customerRes.Value;
         }
 
         public Task<PageableList<Customer>> GetCustomersByPage(int pageNum, int pageSize)
         {
-            Pageable<TableEntity> queryResultsFilter = tableClient.Query<TableEntity>(filter: $"PartitionKey eq '{partitionKey}'", maxPerPage: pageSize);
+            Pageable<Customer> queryResultsFilter = tableClient.Query<Customer>(filter: $"PartitionKey eq '{partitionKey}'", maxPerPage: pageSize);
 
             var skip = (pageNum - 1) * pageSize;
 
             var list = new List<Customer>();
-            foreach (TableEntity qEntity in queryResultsFilter.OrderByDescending(x => x.Timestamp).Skip(skip).Take(pageSize))
+            foreach (Customer customer in queryResultsFilter.OrderByDescending(x => x.Timestamp).Skip(skip).Take(pageSize))
             {
-                list.Add(convertToCustomer(qEntity));
+                list.Add(customer);
             }
 
             return Task.FromResult(new PageableList<Customer>(list, queryResultsFilter.Count()));
         }
 
-        private Customer convertToCustomer(TableEntity entity)
+        public async Task<List<Customer>> GetCustomersByType(CustomerTypes customerType)
         {
-            return new Customer()
+            var value = (int)customerType;
+            var queryResultsFilter = tableClient.QueryAsync<Customer>(x => x.CustomerTypeValue == value);
+
+            var list = new List<Customer>();
+            await foreach (var customersPage in queryResultsFilter.AsPages())
             {
-                RowKey = entity.RowKey,
-                ETag = entity.ETag,
-                PartitionKey = entity.PartitionKey,
-                Timestamp = entity.Timestamp,
-                Address = entity.GetString(nameof(Customer.Address)),
-                CustomerTypeValue = entity.GetInt32(nameof(Customer.CustomerTypeValue)) ?? 0,
-                Id = Guid.Parse(entity.RowKey),
-                Name = entity.GetString(nameof(Customer.Name)),
-                RecordDate = entity.GetDateTime(nameof(Customer.RecordDate)) ?? DateTime.MinValue,
-            };
+                foreach (var customer in customersPage.Values)
+                {
+                    list.Add(customer);
+                }
+            }
+
+            return list;
         }
 
-        public Task UpdateCustomer(Customer customer)
+        public async Task UpdateCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            var customerRes = await tableClient.GetEntityAsync<Customer>(partitionKey, customer.Id.ToString());
+
+            if(customerRes == null)
+            {
+                throw new Exception("Customer not found");
+            }
+
+            customerRes.Value.Name = customer.Name;
+            customerRes.Value.Address = customer.Address;
+            customerRes.Value.CustomerTypeValue = customer.CustomerTypeValue;
+
+            var res = await tableClient.UpsertEntityAsync(customerRes.Value, TableUpdateMode.Replace);
         }
 
         public async Task DeleteCustomer(Guid customerId)
@@ -137,5 +128,7 @@ namespace AzureTableStorage.Service
             // Deletes the table made previously.
             await tableClient.DeleteAsync();
         }
+
+
     }
 }
