@@ -5,7 +5,12 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureTableStorage.WepApp", "AzureTableStorage.WepApp\AzureTableStorage.WepApp.csproj", "{4378198F-6FC3-461E-8492-C813BBC1F214}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureTableStorage.Service", "AzureTableStorage.Service\AzureTableStorage.Service.csproj", "{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureTableStorage.Service", "AzureTableStorage.Service\AzureTableStorage.Service.csproj", "{AC7EE2CB-ECDC-4155-AFAC-C4667AF51387}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CA2FD731-3E07-4B35-965E-803FBE27BA41}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
